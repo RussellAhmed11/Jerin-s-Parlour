@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Nash Patrik",
+    "role": "CEO, Manpol",
+    "feedback": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Purus commodo ipsum duis laoreet maecenas. Feugiat.",
+    "image": "https://randomuser.me/api/portraits/women/44.jpg",
+    "rating": 5
+  },
+  {
+    "name": "Miriam Barron",
+    "role": "Marketing Director, NexaCorp",
+    "feedback": "The service was outstanding! They exceeded my expectations and delivered on time. Highly recommend!",
+    "image": "https://randomuser.me/api/portraits/men/45.jpg",
+    "rating": 3
+  },
+  {
+    "name": "Bria Malone",
+    "role": "Product Manager, SoftTech",
+    "feedback": "Amazing experience from start to finish. Communication was smooth, and the quality was top-notch.",
+    "image": "https://randomuser.me/api/portraits/women/65.jpg",
+    "rating": 4
+  },
+  {
+    "name": "David Lee",
+    "role": "CTO, InnovateX",
+    "feedback": "Very professional and detail-oriented. I felt confident throughout the entire process.",
+    "image": "https://randomuser.me/api/portraits/men/32.jpg",
+    "rating": 5
+  },
+  {
+    "name": "Sophia Chen",
+    "role": "Founder, GlowBeauty",
+    "feedback": "They understood exactly what I needed and delivered beyond expectations. Truly impressive work.",
+    "image": "https://randomuser.me/api/portraits/women/12.jpg",
+    "rating": 4
+  },
+  {
+    "name": "James Carter",
+    "role": "Entrepreneur",
+    "feedback": "Efficient, reliable, and super easy to work with. I will definitely come back again!",
+    "image": "https://randomuser.me/api/portraits/men/22.jpg",
+    "rating": 4
+  }
+]

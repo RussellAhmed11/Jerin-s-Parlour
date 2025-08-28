@@ -1,0 +1,38 @@
+[
+  {
+    "title": "Anti Age Face Treatment",
+    "price": "$199",
+    "description": "Rejuvenate your skin and reduce fine lines with our advanced anti-age facial treatment.",
+    "icon": "💆‍♀️"
+  },
+  {
+    "title": "Hair Color & Styling",
+    "price": "$99",
+    "description": "Get trendy hairstyles and premium hair coloring services that match your personality.",
+    "icon": "💇‍♀️"
+  },
+  {
+    "title": "Skin Care Treatment",
+    "price": "$299",
+    "description": "Revitalize your skin with deep cleansing and nourishing treatments tailored to your needs.",
+    "icon": "🧴"
+  },
+  {
+    "title": "Bridal Makeup",
+    "price": "$399",
+    "description": "Look stunning on your special day with our professional bridal makeup packages.",
+    "icon": "💄"
+  },
+  {
+    "title": "Nail Art & Manicure",
+    "price": "$79",
+    "description": "Pamper your hands with stylish nail art and refreshing manicure services.",
+    "icon": "💅"
+  },
+  {
+    "title": "Spa & Relaxation",
+    "price": "$149",
+    "description": "Relieve stress and relax your body with our premium spa and massage sessions.",
+    "icon": "🛀"
+  }
+]
