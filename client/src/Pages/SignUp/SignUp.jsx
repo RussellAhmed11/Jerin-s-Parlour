@@ -3,8 +3,8 @@ import { FcGoogle } from 'react-icons/fc';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../../Hooks/useAuth';
 import { imageUpload } from "../../Hooks/UseImage";
-import axios from "axios";
 import { axiosPublic } from "../../Hooks/useAxiosPublic";
+import SocislLogin from "../Shared/Sociel/SocislLogin";
 const SignUp = () => {
     const navigate=useNavigate();
     const location =useLocation();
@@ -37,10 +37,7 @@ const SignUp = () => {
             console.log(error.message)
         }    
     }
-    const handleGoogleLogin=async()=>{
-       await googleLogIn();
-       navigate(from,{replace:true})
-    }
+   
 
     return (
         <div className='flex justify-center items-center md:min-h-screen'>
@@ -135,11 +132,7 @@ const SignUp = () => {
                     </p>
                     <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
                 </div>
-                <button onClick={handleGoogleLogin} className='disabled:cursor flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer'>
-                    <FcGoogle size={32} />
-
-                    <p>Continue with Google</p>
-                </button>
+               <SocislLogin></SocislLogin>
                 {/* <button onClick={()=>facebookLogIn()} className='disabled:cursor flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer'>
           <FcFacebook size={32} />
 

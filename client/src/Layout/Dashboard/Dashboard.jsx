@@ -22,11 +22,11 @@ const Dashboard = () => {
                                 <FaUtensils></FaUtensils>
                                 Add services</NavLink></li>
 
-                            <li><NavLink to="/dashboard/makeadmin">
+                            <li><NavLink to="/dashboard/alluser">
                                 <FaList></FaList>
                                 Make Admin</NavLink></li>
 
-                            <li><NavLink to="/dashboard/manageservices">
+                            <li><NavLink to="/dashboard/manageservice">
                                 <FaBook></FaBook>
                                 Manage Services</NavLink></li>
                         </> : <>

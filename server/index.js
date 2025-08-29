@@ -3,7 +3,7 @@ const app = express()
 require('dotenv').config()
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
-const { MongoClient, ServerApiVersion } = require('mongodb')
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb')
 const jwt = require('jsonwebtoken')
 
 const port = process.env.PORT || 8000
@@ -41,7 +41,7 @@ const verifyToken = async (req, res, next) => {
 
 async function run() {
     try {
-        const servceCollection = client.db('jerinsDB').collection('services');
+        const serviceCollection = client.db('jerinsDB').collection('services');
         const userCollection = client.db('jerinsDB').collection('users');
         const reviewCollection = client.db('jerinsDB').collection('reviews')
         // auth related api
@@ -59,15 +59,42 @@ async function run() {
         })
 
         // get all service
+        app.get('/service/:id',async(req,res)=>{
+            const id=req.params.id;
+            const query={_id:new ObjectId(id)}
+            const result=await serviceCollection.find(query).toArray();
+            res.send(result)
+        })
         app.get('/service', async (req, res) => {
-            const result = await servceCollection.find().toArray();
+            const result = await serviceCollection.find().toArray();
             res.send(result)
         })
         app.post('/service',verifyToken,async(req,res)=>{
             const service=req.body;
-            const result=await servceCollection.insertOne(service);
+            const result=await serviceCollection.insertOne(service);
             res.send(result);
         })
+        app.patch('/service/:id',async(req,res)=>{
+            const service=req.body;
+            const id=req.params.id;
+            const filter={_id:new ObjectId(id)};
+            const updatedoc={
+                $set:{
+                    title:service?.title,
+                    price:service?.price,
+                    image_url:service?.image_url
+                }
+            }
+            const result=await serviceCollection.updateOne(filter,updatedoc);
+            res.send(result);
+        })
+        app.delete("/service/:id",async(req,res)=>{
+            const id=req.params.id;
+            const query={_id:new ObjectId(id)}
+            const result=await serviceCollection.deleteOne(query);
+            res.send(result);
+        })
+      
         //  review api
         app.get('/review', async (req, res) => {
             const result = await reviewCollection.find().toArray();
@@ -75,13 +102,35 @@ async function run() {
         })
 
         // user api
+          // get all users
+        app.get('/users',async(req,res)=>{
+            const result=await userCollection.find().toArray()
+            res.send(result);
+        })
         app.get('/user', async (req, res) => {
+            
             const result = await userCollection.find().toArray();
             res.send(result)
         })
         app.post('/user', async (req, res) => {
             const user = req.body;
+            const query={email:user.email}
+            const existingUser=await userCollection.findOne(query);
+            if (existingUser) {
+                return res.send({ message: 'User already exixts' })
+            }
             const result = await userCollection.insertOne(user);
+            res.send(result)
+        })
+        app.patch('/user/admin/:id',async(req,res)=>{
+            const id=req?.params?.id;
+            const filter={_id:new ObjectId(id)};
+            const updatedDoc={
+                $set:{
+                    role:'admin'
+                }
+            }
+            const result=await userCollection.insertOne(filter,updatedDoc)
             res.send(result)
         })
 

@@ -3,6 +3,7 @@ import { FcGoogle } from 'react-icons/fc'
 import { Link, replace, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../../Hooks/useAuth';
 import { useState } from 'react';
+import SocislLogin from '../Shared/Sociel/SocislLogin';
 const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
@@ -17,15 +18,8 @@ const Login = () => {
         try {
           await  loginUser(email, password);
            navigate(from, { replace: true })
-        }catch(error) {setErrorMessage(error.message)}
-         
-           
+        }catch(error) {setErrorMessage(error.message)}    
 
-    }
-
-    const handleGoogleSubmit = () => {
-        googleLogIn();
-        navigate(from, { replace: true })
     }
     return (
         <div className='flex justify-center items-center min-h-screen'>
@@ -98,11 +92,7 @@ const Login = () => {
                     </p>
                     <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
                 </div>
-                <button onClick={handleGoogleSubmit} className='disabled:cursor flex justify-center items-center space-x-2 border m-3 p-2 border-gray-300 border-rounded cursor-pointer'>
-                    <FcGoogle size={32} />
-
-                    <p>Continue with Google</p>
-                </button>
+                <SocislLogin></SocislLogin>
                 <p className='px-6 text-sm text-center text-gray-400'>
                     Don&apos;t have an account yet?{' '}
                     <Link

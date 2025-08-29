@@ -1,15 +1,9 @@
-import { useEffect, useState } from "react";
-import { axiosPublic } from "../../Hooks/useAxiosPublic";
-import { useQuery } from "@tanstack/react-query";
+
+import { useServices } from "../../Hooks/useServices";
 
 const Services = () => {
-    const { data: services = [], isLoading, error } = useQuery({
-        queryKey: ['services'],
-        queryFn: async () => {
-            const { data } = await axiosPublic.get('/service')
-            return data
-        }
-    })
+    const { data: services = [], isLoading, error } = useServices()
+     
     if (isLoading) return <p>Loading</p>
     if (error) return <p>Somethink went wrong</p>
     return (

@@ -8,6 +8,9 @@ import SignUp from "../Pages/SignUp/SignUp";
 import Dashboard from "../Layout/Dashboard/Dashboard";
 import PrivateRoute from "./PrivateRoute";
 import AddServices from "../Pages/Dashboard/AddServices";
+import ManageService from "../Pages/Dashboard/ManageService";
+import UpdateService from "../Pages/Dashboard/UpdateService";
+import Alluser from "../Pages/Dashboard/alluser";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -34,6 +37,17 @@ export const router = createBrowserRouter([
       {
         path:'addservice',
         element:<AddServices></AddServices>
+      },{
+        path:'manageservice',
+        element:<ManageService></ManageService>
+      },{
+        path:'updateservice/:id',
+        element:<UpdateService/>,
+        loader:({params})=>fetch(`http://localhost:8000/service/${params.id}`)
+      },
+      {
+        path:'alluser',
+        element:<Alluser/>
       }
     ]
   }
