@@ -3,22 +3,15 @@ import { axiosPublic } from "../../Hooks/useAxiosPublic";
 import { useQuery } from "@tanstack/react-query";
 
 const Services = () => {
-    const {data:services=[],isLoading,error}=useQuery({
-        queryKey:['services'],
-        queryFn:async()=>{
-            const {data}=await axiosPublic.get('/service')
+    const { data: services = [], isLoading, error } = useQuery({
+        queryKey: ['services'],
+        queryFn: async () => {
+            const { data } = await axiosPublic.get('/service')
             return data
         }
     })
-    if(isLoading) return <p>Loading</p>
-    if(error) return <p>Somethink went wrong</p>
-    // useEffect(() => {
-    //     fetch("/services.json")
-    //         .then(res => res.json())
-    //         .then(data => setServices(data));
-    // }, []);
-
-    
+    if (isLoading) return <p>Loading</p>
+    if (error) return <p>Somethink went wrong</p>
     return (
         <div className="py-16 bg-gray-50">
             {/* Section Heading */}
@@ -38,9 +31,9 @@ const Services = () => {
                         key={index}
                         className="relative p-8 rounded-2xl transition-all duration-300 bg-white shadow-md hover:scale-105 shadow-xl"
                     >
-                        {/* Icon in Circle */}
+                        {/* image */}
                         <div className="w-16 h-16 flex items-center justify-center rounded-full bg-pink-100 text-pink-600 text-3xl mx-auto -mt-12 shadow-md">
-                            {service?.icon}
+                            <img src={service?.image_url} alt="" className="w-12 h-12 rounded-full object-cover" />
                         </div>
 
                         {/* Title */}
