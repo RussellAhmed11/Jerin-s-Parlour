@@ -23,7 +23,7 @@ const AddServices = () => {
     }
 
     return (
-        <div >
+        <div className="md:w-full md:p-5 mx-auto">
             <form
                 onSubmit={handleSubmit(handleSubmitform)}
                 className="bg-white p-6 rounded-2xl shadow-md w-full max-w-lg space-y-4"

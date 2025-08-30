@@ -2,8 +2,6 @@ import { useQuery } from "@tanstack/react-query";
 import { useServices } from "../../Hooks/useServices";
 import { axiosPrivate } from "../../Hooks/useAxiosPrivate";
 import Swal from "sweetalert2";
-import { useForm } from "react-hook-form";
-import { imageUpload } from "../../Hooks/UseImage";
 import { Link } from "react-router-dom";
 
 const ManageService = () => {
@@ -43,7 +41,7 @@ const ManageService = () => {
    
     return (
         <div>
-            <div className="overflow-x-auto">
+            <div className="md:w-full md:p-5">
                 <table className="table">
                     {/* head */}
                     <thead>

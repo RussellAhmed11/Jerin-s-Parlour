@@ -12,6 +12,9 @@ import ManageService from "../Pages/Dashboard/ManageService";
 import UpdateService from "../Pages/Dashboard/UpdateService";
 import Alluser from "../Pages/Dashboard/alluser";
 import AdminRoute from "./AdminRoute";
+import Book from "../Pages/Dashboard/Book";
+import BookingList from "../Pages/Dashboard/BookingList";
+import Review from "../Pages/Dashboard/Review";
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -40,7 +43,7 @@ export const router = createBrowserRouter([
         element:<AdminRoute><AddServices/></AdminRoute>
       },{
         path:'manageservice',
-        element:<ManageService></ManageService>
+        element:<AdminRoute><ManageService/></AdminRoute> 
       },{
         path:'updateservice/:id',
         element:<AdminRoute><UpdateService/></AdminRoute>,
@@ -49,6 +52,15 @@ export const router = createBrowserRouter([
       {
         path:'alluser',
         element:<AdminRoute><Alluser/></AdminRoute>
+      },{
+        path:'book',
+        element:<Book></Book>
+      },{
+        path:'bookinglist',
+        element:<BookingList></BookingList>
+      },{
+        path:'review',
+        element:<Review/>
       }
     ]
   }

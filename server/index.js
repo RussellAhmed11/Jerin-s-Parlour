@@ -35,6 +35,7 @@ async function run() {
         const serviceCollection = client.db('jerinsDB').collection('services');
         const userCollection = client.db('jerinsDB').collection('users');
         const reviewCollection = client.db('jerinsDB').collection('reviews')
+        const cartCollection=client.db('jerinsDB').collection('cart')
         // auth related api
         app.post('/jwt', async (req, res) => {
             const user = req.body;
@@ -67,102 +68,7 @@ async function run() {
             }
             next()
         }
-       
-
-        // admin related route
-        app.patch('/user/admin/:id', async (req, res) => {
-            const id = req?.params?.id;
-            const filter = { _id: new ObjectId(id) };
-            const updatedDoc = {
-                $set: {
-                    role: 'admin'
-                }
-            }
-            const result = await userCollection.updateOne(filter, updatedDoc)
-            res.send(result)
-        })
-        app.patch('/user/admin-remove/:id',async(req,res)=>{
-            const id=req.params?.id;
-            const filter={_id:new ObjectId(id)};
-            const updatedDoc={
-                $unset:{
-                    role:'admin'
-                }
-            }
-            const result=await userCollection.updateOne(filter,updatedDoc);
-            res.send(result)
-        })
-        app.get('/user/admin/:email', verifyToken,verifyadmin, async (req, res) => {
-            const email = req?.params?.email;
-            if (email !== req?.user?.email) {
-                return res.status(403).send("Unauthorized access")
-            }
-            const query = { email: email };
-            const user = await userCollection.findOne(query);
-            if (user) {
-                admin = user?.role == 'admin'
-            }
-            res.send({admin});
-        })
-        app.get('/logout', async (req, res) => {
-            try {
-                res.clearCookie('token', {
-                    httpOnly: true,
-                    secure: false,
-                    secure: process.env.NODE_ENV === 'production',
-                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
-                })
-                    .send({ success: true })
-            } catch (error) {
-                res.status(500).send(error)
-            }
-
-        })
-        // get all service
-        app.get('/service/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: new ObjectId(id) }
-            const result = await serviceCollection.find(query).toArray();
-            res.send(result)
-        })
-        app.get('/service', async (req, res) => {
-            const result = await serviceCollection.find().toArray();
-            res.send(result)
-        })
-        app.post('/service', verifyToken,verifyadmin, async (req, res) => {
-            const service = req.body;
-            const result = await serviceCollection.insertOne(service);
-            res.send(result);
-        })
-        app.patch('/service/:id',verifyToken,verifyadmin, async (req, res) => {
-            const service = req.body;
-            const id = req.params.id;
-            const filter = { _id: new ObjectId(id) };
-            const updatedoc = {
-                $set: {
-                    title: service?.title,
-                    price: service?.price,
-                    image_url: service?.image_url
-                }
-            }
-            const result = await serviceCollection.updateOne(filter, updatedoc);
-            res.send(result);
-        })
-        app.delete("/service/:id",verifyToken,verifyadmin, async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: new ObjectId(id) }
-            const result = await serviceCollection.deleteOne(query);
-            res.send(result);
-        })
-
-        //  review api
-        app.get('/review', async (req, res) => {
-            const result = await reviewCollection.find().toArray();
-            res.send(result);
-        })
-
-        // user api
-        // get all users
+        // user related api
         app.get('/users', async (req, res) => {
             const result = await userCollection.find().toArray()
             res.send(result);
@@ -182,7 +88,111 @@ async function run() {
             const result = await userCollection.insertOne(user);
             res.send(result)
         })
+        app.get('/logout', async (req, res) => {
+            try {
+                res.clearCookie('token', {
+                    httpOnly: true,
+                    secure: false,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+                })
+                    .send({ success: true })
+            } catch (error) {
+                res.status(500).send(error)
+            }
 
+        })
+        // admin related api
+        app.patch('/user/admin/:id', verifyToken, verifyadmin, async (req, res) => {
+            const id = req?.params?.id;
+            const filter = { _id: new ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    role: 'admin'
+                }
+            }
+            const result = await userCollection.updateOne(filter, updatedDoc)
+            res.send(result)
+        })
+        app.patch('/user/admin-remove/:id', verifyadmin, verifyToken, async (req, res) => {
+            const id = req.params?.id;
+            const filter = { _id: new ObjectId(id) };
+            const updatedDoc = {
+                $unset: {
+                    role: 'admin'
+                }
+            }
+            const result = await userCollection.updateOne(filter, updatedDoc);
+            res.send(result)
+        })
+        app.get('/user/admin/:email', verifyToken, verifyadmin, async (req, res) => {
+            const email = req?.params?.email;
+            if (email !== req?.user?.email) {
+                return res.status(403).send("Unauthorized access")
+            }
+            const query = { email: email };
+            const user = await userCollection.findOne(query);
+            if (user) {
+                admin = user?.role == 'admin'
+            }
+            res.send({ admin });
+        })
+
+        // get all service
+        app.get('/service/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await serviceCollection.find(query).toArray();
+            res.send(result)
+        })
+        app.get('/service', async (req, res) => {
+            const result = await serviceCollection.find().toArray();
+            res.send(result)
+        })
+        app.post('/service', verifyToken, verifyadmin, async (req, res) => {
+            const service = req.body;
+            const result = await serviceCollection.insertOne(service);
+            res.send(result);
+        })
+        app.patch('/service/:id', verifyToken, verifyadmin, async (req, res) => {
+            const service = req.body;
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const updatedoc = {
+                $set: {
+                    title: service?.title,
+                    price: service?.price,
+                    image_url: service?.image_url
+                }
+            }
+            const result = await serviceCollection.updateOne(filter, updatedoc);
+            res.send(result);
+        })
+        app.delete("/service/:id", verifyToken, verifyadmin, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await serviceCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        //  user review api
+        app.get('/review', async (req, res) => {
+            const result = await reviewCollection.find().toArray();
+            res.send(result);
+        })
+
+        // add to cart api
+        app.post('/cart',async(req,res)=>{
+            const cart=req.body;
+            const result=await cartCollection.insertOne(cart);
+            res.send(result);
+        })
+         app.get('/cart',async(req,res)=>{
+            const email=req?.query?.email;
+            const query={email:email};
+            const result=await cartCollection.find(query).toArray();
+            res.send(result);
+         })
 
 
 

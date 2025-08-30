@@ -71,7 +71,7 @@ const Alluser = () => {
     }
     return (
         <div>
-            <div className="overflow-x-auto">
+            <div className="md:w-full md:p-5 mx-auto">
                 <table className="table">
                     {/* head */}
                     <thead>

@@ -1,11 +1,56 @@
 
+import { useLocation, useNavigate } from "react-router-dom";
+import useAuth from "../../Hooks/useAuth";
 import { useServices } from "../../Hooks/useServices";
+import Swal from "sweetalert2";
+import { axiosPrivate } from "../../Hooks/useAxiosPrivate";
 
 const Services = () => {
-    const { data: services = [], isLoading, error } = useServices()
-     
+    const navigate = useNavigate();
+    const location=useLocation();
+    const { user } = useAuth()
+    const { data: services = [], isLoading, error, refetch } = useServices()
     if (isLoading) return <p>Loading</p>
     if (error) return <p>Somethink went wrong</p>
+    const handleAddToCart = async ({ title, price, _id, image_url }) => {
+        if (user && user.email) {
+            const cartItem = {
+                cartItemId: _id,
+                email: user?.email,
+                title, price, image_url,
+            }
+            try {
+                const res = await axiosPrivate.post('/cart', cartItem)
+                if (res.data.insertedId) {
+                    Swal.fire({
+                        position: "top-end",
+                        icon: "success",
+                        title: "Add to cart success",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                }
+
+            } catch (error) {
+                console.log(error.message)
+            }
+        } else {
+            Swal.fire({
+                title: "You are not logged in",
+                text: "please login to add to the cart!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes,Login"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // send the user to the log in page
+                    navigate("/login", { state: { from: location } })
+                }
+            })
+        }
+    }
     return (
         <div className="py-16 bg-gray-50">
             {/* Section Heading */}
@@ -42,6 +87,11 @@ const Services = () => {
                         {/* Description */}
                         <div className="flex items-center justify-center">
                             <p className="text-gray-600 text-sm leading-relaxed">{service?.description}</p>
+                        </div>
+                        <div className="flex justify-center items-center">
+                            <button onClick={() => handleAddToCart(service)} className="btn btn-seceondry p-3 bg-pink-500 text-white font-medium rounded-md hover:bg-pink-600 transition">
+                                Add to cart
+                            </button>
                         </div>
                     </div>
                 )

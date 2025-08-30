@@ -21,9 +21,10 @@ const SignUp = () => {
             const image_url = await imageUpload(image);
             //    user create
             await createUser(email, password)
+
             // user info update
             await updateUserProfile(name, image_url)
-
+           
             const userInfo = {
                 name: name,
                 email: email,
