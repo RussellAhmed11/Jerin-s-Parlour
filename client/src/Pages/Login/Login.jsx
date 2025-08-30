@@ -7,7 +7,7 @@ import SocislLogin from '../Shared/Sociel/SocislLogin';
 const Login = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const from = location.state?.from?.pathname || "/";
+    const from=location.state?.from?.pathname || "/";
     const { googleLogIn, loginUser } = useAuth();
     const [errorMessage, setErrorMessage] = useState()
     const handleSignIn = async (e) => {
@@ -17,7 +17,7 @@ const Login = () => {
         const password = form.password.value;
         try {
           await  loginUser(email, password);
-           navigate(from, { replace: true })
+           navigate(from,{replace:true})
         }catch(error) {setErrorMessage(error.message)}    
 
     }
@@ -90,7 +90,9 @@ const Login = () => {
                     <p className='px-3 text-sm dark:text-gray-400'>
                         Login with social accounts
                     </p>
-                    <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'></div>
+                    <div className='flex-1 h-px sm:w-16 dark:bg-gray-700'>
+                        
+                    </div>
                 </div>
                 <SocislLogin></SocislLogin>
                 <p className='px-6 text-sm text-center text-gray-400'>

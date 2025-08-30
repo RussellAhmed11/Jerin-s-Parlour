@@ -2,11 +2,13 @@ import React from 'react';
 import useAuth from '../../../Hooks/useAuth';
 import { FcGoogle } from 'react-icons/fc';
 import { axiosPublic } from '../../../Hooks/useAxiosPublic';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const SocislLogin = () => {
     const {googleLogIn}=useAuth();
     const navigate=useNavigate()
+    const location=useLocation();
+    const from=location.state?.from?.pathname || "/";
      const handleGoogleLogin=async()=>{
        const {user}= await googleLogIn();
        const userInfo={

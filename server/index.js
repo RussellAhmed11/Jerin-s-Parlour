@@ -14,8 +14,8 @@ const corsOptions = {
     credentials: true,
     optionSuccessStatus: 200,
 }
-app.use(cors(corsOptions))
 
+app.use(cors(corsOptions))
 app.use(express.json())
 app.use(cookieParser())
 
@@ -29,15 +29,6 @@ const client = new MongoClient(uri, {
         deprecationErrors: true,
     },
 })
-const verifyToken = async (req, res, next) => {
-    const token = req?.cookies?.token;
-    if (!token) return res.status(401).send({ message: 'Unauthorized acces' })
-    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, decoded) => {
-        if (error) return res.status(401).send({ message: 'Unauthorized access' })
-        req.user = decoded
-        next()
-    })
-}
 
 async function run() {
     try {
@@ -57,44 +48,113 @@ async function run() {
                 sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
             }).send({ success: true })
         })
+        const verifyToken = async (req, res, next) => {
+            const token = req?.cookies?.token;
+            if (!token) return res.status(401).send({ message: 'Unauthorized acces' })
+            jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, decoded) => {
+                if (error) return res.status(401).send({ message: 'Unauthorized access' })
+                req.user = decoded
+                next()
+            })
+        }
+        const verifyadmin = async (req, res, next) => {
+            const email = req?.user?.email;
+            const query = { email: email };
+            const user = await userCollection.findOne(query);
+            const isAdmin = user?.role == 'admin';
+            if (!isAdmin) {
+                return res.status(403).send("Unauthorized access")
+            }
+            next()
+        }
+       
 
+        // admin related route
+        app.patch('/user/admin/:id', async (req, res) => {
+            const id = req?.params?.id;
+            const filter = { _id: new ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    role: 'admin'
+                }
+            }
+            const result = await userCollection.updateOne(filter, updatedDoc)
+            res.send(result)
+        })
+        app.patch('/user/admin-remove/:id',async(req,res)=>{
+            const id=req.params?.id;
+            const filter={_id:new ObjectId(id)};
+            const updatedDoc={
+                $unset:{
+                    role:'admin'
+                }
+            }
+            const result=await userCollection.updateOne(filter,updatedDoc);
+            res.send(result)
+        })
+        app.get('/user/admin/:email', verifyToken,verifyadmin, async (req, res) => {
+            const email = req?.params?.email;
+            if (email !== req?.user?.email) {
+                return res.status(403).send("Unauthorized access")
+            }
+            const query = { email: email };
+            const user = await userCollection.findOne(query);
+            if (user) {
+                admin = user?.role == 'admin'
+            }
+            res.send({admin});
+        })
+        app.get('/logout', async (req, res) => {
+            try {
+                res.clearCookie('token', {
+                    httpOnly: true,
+                    secure: false,
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
+                })
+                    .send({ success: true })
+            } catch (error) {
+                res.status(500).send(error)
+            }
+
+        })
         // get all service
-        app.get('/service/:id',async(req,res)=>{
-            const id=req.params.id;
-            const query={_id:new ObjectId(id)}
-            const result=await serviceCollection.find(query).toArray();
+        app.get('/service/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await serviceCollection.find(query).toArray();
             res.send(result)
         })
         app.get('/service', async (req, res) => {
             const result = await serviceCollection.find().toArray();
             res.send(result)
         })
-        app.post('/service',verifyToken,async(req,res)=>{
-            const service=req.body;
-            const result=await serviceCollection.insertOne(service);
+        app.post('/service', verifyToken,verifyadmin, async (req, res) => {
+            const service = req.body;
+            const result = await serviceCollection.insertOne(service);
             res.send(result);
         })
-        app.patch('/service/:id',async(req,res)=>{
-            const service=req.body;
-            const id=req.params.id;
-            const filter={_id:new ObjectId(id)};
-            const updatedoc={
-                $set:{
-                    title:service?.title,
-                    price:service?.price,
-                    image_url:service?.image_url
+        app.patch('/service/:id',verifyToken,verifyadmin, async (req, res) => {
+            const service = req.body;
+            const id = req.params.id;
+            const filter = { _id: new ObjectId(id) };
+            const updatedoc = {
+                $set: {
+                    title: service?.title,
+                    price: service?.price,
+                    image_url: service?.image_url
                 }
             }
-            const result=await serviceCollection.updateOne(filter,updatedoc);
+            const result = await serviceCollection.updateOne(filter, updatedoc);
             res.send(result);
         })
-        app.delete("/service/:id",async(req,res)=>{
-            const id=req.params.id;
-            const query={_id:new ObjectId(id)}
-            const result=await serviceCollection.deleteOne(query);
+        app.delete("/service/:id",verifyToken,verifyadmin, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await serviceCollection.deleteOne(query);
             res.send(result);
         })
-      
+
         //  review api
         app.get('/review', async (req, res) => {
             const result = await reviewCollection.find().toArray();
@@ -102,37 +162,28 @@ async function run() {
         })
 
         // user api
-          // get all users
-        app.get('/users',async(req,res)=>{
-            const result=await userCollection.find().toArray()
+        // get all users
+        app.get('/users', async (req, res) => {
+            const result = await userCollection.find().toArray()
             res.send(result);
         })
         app.get('/user', async (req, res) => {
-            
+
             const result = await userCollection.find().toArray();
             res.send(result)
         })
         app.post('/user', async (req, res) => {
             const user = req.body;
-            const query={email:user.email}
-            const existingUser=await userCollection.findOne(query);
+            const query = { email: user.email }
+            const existingUser = await userCollection.findOne(query);
             if (existingUser) {
                 return res.send({ message: 'User already exixts' })
             }
             const result = await userCollection.insertOne(user);
             res.send(result)
         })
-        app.patch('/user/admin/:id',async(req,res)=>{
-            const id=req?.params?.id;
-            const filter={_id:new ObjectId(id)};
-            const updatedDoc={
-                $set:{
-                    role:'admin'
-                }
-            }
-            const result=await userCollection.insertOne(filter,updatedDoc)
-            res.send(result)
-        })
+
+
 
 
         // Send a ping to confirm a successful connection

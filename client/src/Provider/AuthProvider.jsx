@@ -23,8 +23,11 @@ const AuthProvider = ({ children }) => {
         setLoading(true)
         return signInWithEmailAndPassword(auth,email,password)
     }
-    const logOutUser=()=>{
+    const logOutUser=async()=>{
         setLoading(true)
+         await axiosPublic.get('/logout',{
+            withCredentials:true
+         })
         return signOut(auth)
     }
     const googleLogIn=()=>{
@@ -44,7 +47,7 @@ const AuthProvider = ({ children }) => {
     useEffect(()=>{
         const unSubscribe=onAuthStateChanged(auth,(currentUser)=>{
             setUser(currentUser)
-            if(currentUser){
+               if(currentUser){
                 getToken(currentUser.email)
             }
             setLoading(false)

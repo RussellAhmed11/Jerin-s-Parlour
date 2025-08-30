@@ -2,9 +2,10 @@ import { NavLink, Outlet } from "react-router-dom";
 import { FaAd, FaBook, FaCalendar, FaEnvelope, FaHome, FaList, FaSearch, FaShoppingCart, FaUsers, FaUtensils } from "react-icons/fa";
 
 import Navbar2 from "../../Pages/Shared/Navbar/navbar2";
+import UseAdmin from "../../Hooks/UseAdmin";
 
 const Dashboard = () => {
-    const isAdmin=true;
+    const[isAdmin]=UseAdmin();
     return (
         <div>
         <Navbar2/>
