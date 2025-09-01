@@ -3,19 +3,24 @@ import useAuth from './useAuth';
 import { axiosPrivate } from './useAxiosPrivate';
 
 const UseCart = () => {
-     const {user,loading}=useAuth()
+    const { user, loading } = useAuth()
     const { data: carts = [], Isloading, refetch } = useQuery({
         queryKey: ['cart', user?.email],
-        enabled:!loading ,
+        enabled: !loading,
         queryFn: async () => {
             const { data } = await axiosPrivate.get(`/cart?email=${user.email}`)
             return data;
         }
-        
+
     })
-    return [carts,Isloading,refetch]
-   
-  
+    if (Isloading) {
+        return <progress className="progress w-56"></progress>
+    } else {
+        return [carts, Isloading, refetch]
+
+    }
+
+
 };
 
 export default UseCart;

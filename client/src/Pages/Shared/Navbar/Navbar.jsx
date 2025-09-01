@@ -1,13 +1,23 @@
 import { Link } from 'react-router-dom';
 import logo from '../../../../public/logo.png'
 import useAuth from '../../../Hooks/useAuth';
+import UseCart from '../../../Hooks/useCart';
+import UseAdmin from '../../../Hooks/UseAdmin';
 
 const Navbar = () => {
     const { user, logOutUser } = useAuth()
+    const [carts]=UseCart();
+    const[isAdmin]=UseAdmin();
     const links = <>
         <li><Link to="/">Home</Link></li>
-        <li><Link to="/dashboard/bookinglist">Cart</Link></li>
-        <li><Link to="/dashboard">Dashboard</Link></li>
+        <li><Link to="/dashboard/bookinglist">Booking({carts?.length})</Link></li>
+        {
+          user &&  isAdmin &&  <li><Link to="/dashboard/adminhome">Dashboard</Link></li>
+        }
+          {
+          user &&  !isAdmin &&  <li><Link to="/dashboard/userhome">Dashboard</Link></li>
+        }
+        
         <li><Link to="/">Contac Us</Link></li>
     </>
     return (

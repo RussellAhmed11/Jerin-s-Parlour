@@ -1,5 +1,4 @@
 
-import { FcGoogle } from 'react-icons/fc'
 import { Link, replace, useLocation, useNavigate } from 'react-router-dom';
 import useAuth from '../../Hooks/useAuth';
 import { useState } from 'react';

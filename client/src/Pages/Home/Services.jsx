@@ -11,7 +11,6 @@ const Services = () => {
     const { user } = useAuth()
     const { data: services = [], isLoading, error, refetch } = useServices()
     if (isLoading) return <p>Loading</p>
-    if (error) return <p>Somethink went wrong</p>
     const handleAddToCart = async ({ title, price, _id, image_url }) => {
         if (user && user.email) {
             const cartItem = {
@@ -22,6 +21,7 @@ const Services = () => {
             try {
                 const res = await axiosPrivate.post('/cart', cartItem)
                 if (res.data.insertedId) {
+                    refetch()
                     Swal.fire({
                         position: "top-end",
                         icon: "success",
@@ -90,7 +90,7 @@ const Services = () => {
                         </div>
                         <div className="flex justify-center items-center">
                             <button onClick={() => handleAddToCart(service)} className="btn btn-seceondry p-3 bg-pink-500 text-white font-medium rounded-md hover:bg-pink-600 transition">
-                                Add to cart
+                                Add to Booking list
                             </button>
                         </div>
                     </div>

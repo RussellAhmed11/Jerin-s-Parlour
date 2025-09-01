@@ -15,6 +15,10 @@ import AdminRoute from "./AdminRoute";
 import Book from "../Pages/Dashboard/Book";
 import BookingList from "../Pages/Dashboard/BookingList";
 import Review from "../Pages/Dashboard/Review";
+import Appointment from "../Pages/Dashboard/Payment/Appointment";
+import UserHome from "../Pages/Dashboard/UserHome";
+import AdminHome from "../Pages/Dashboard/AdminHome";
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -39,6 +43,14 @@ export const router = createBrowserRouter([
     element:<PrivateRoute><Dashboard/></PrivateRoute>,
     children:[
       {
+        path:'userhome',
+        element:<UserHome></UserHome>
+      },
+      {
+        path:'adminhome',
+        element:<AdminRoute><AdminHome></AdminHome></AdminRoute>
+      },
+      {
         path:'addservice',
         element:<AdminRoute><AddServices/></AdminRoute>
       },{
@@ -61,6 +73,9 @@ export const router = createBrowserRouter([
       },{
         path:'review',
         element:<Review/>
+      },{
+        path:'appointment',
+        element:<Appointment></Appointment>
       }
     ]
   }

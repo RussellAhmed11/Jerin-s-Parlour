@@ -3,6 +3,7 @@ const app = express()
 require('dotenv').config()
 const cors = require('cors')
 const cookieParser = require('cookie-parser')
+const stripe = require('stripe')(process.env.STRIPE_SCRECT_KEY)
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb')
 const jwt = require('jsonwebtoken')
 
@@ -44,7 +45,6 @@ async function run() {
             })
             res.cookie('token', token, {
                 httpOnly: true,
-                secure: false,
                 secure: process.env.NODE_ENV === 'production',
                 sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
             }).send({ success: true })
@@ -74,7 +74,6 @@ async function run() {
             res.send(result);
         })
         app.get('/user', async (req, res) => {
-
             const result = await userCollection.find().toArray();
             res.send(result)
         })
@@ -92,7 +91,6 @@ async function run() {
             try {
                 res.clearCookie('token', {
                     httpOnly: true,
-                    secure: false,
                     secure: process.env.NODE_ENV === 'production',
                     sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'strict',
                 })
@@ -114,7 +112,7 @@ async function run() {
             const result = await userCollection.updateOne(filter, updatedDoc)
             res.send(result)
         })
-        app.patch('/user/admin-remove/:id', verifyadmin, verifyToken, async (req, res) => {
+        app.patch('/user/admin-remove/:id',verifyToken,verifyadmin, async (req, res) => {
             const id = req.params?.id;
             const filter = { _id: new ObjectId(id) };
             const updatedDoc = {
@@ -140,7 +138,7 @@ async function run() {
 
         // get all service
         app.get('/service/:id', async (req, res) => {
-            const id = req.params.id;
+            const id = req?.params?.id;
             const query = { _id: new ObjectId(id) }
             const result = await serviceCollection.find(query).toArray();
             res.send(result)
@@ -176,25 +174,41 @@ async function run() {
         })
 
         //  user review api
-        app.get('/review', async (req, res) => {
+        app.get('/review',verifyToken, async (req, res) => {
             const result = await reviewCollection.find().toArray();
             res.send(result);
         })
 
         // add to cart api
-        app.post('/cart',async(req,res)=>{
+        app.post('/cart',verifyToken,async(req,res)=>{
             const cart=req.body;
             const result=await cartCollection.insertOne(cart);
             res.send(result);
         })
-         app.get('/cart',async(req,res)=>{
+         app.get('/cart',verifyToken, async(req,res)=>{
             const email=req?.query?.email;
             const query={email:email};
             const result=await cartCollection.find(query).toArray();
             res.send(result);
          })
-
-
+         app.delete('/cart/:id',verifyToken, async(req,res)=>{
+            const id=req?.params?.id;
+            const query={_id:new ObjectId(id)};
+            const result=await cartCollection.deleteOne(query);
+            res.send(result);
+         })
+        app.post('/create-payment-intent',async(req,res)=>{
+            const {price}=req.body;
+            const amount=parseInt(price*100);
+            const paymentIntent=await stripe.paymentIntents.create({
+                amount:amount,
+                currency:'usd',
+                payment_method_types:['card'],
+            })
+            res.send({
+                clientSecret: paymentIntent.client_secret
+            })
+        })
 
         // Send a ping to confirm a successful connection
         await client.db('admin').command({ ping: 1 })
